@@ -2,7 +2,8 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+// --- Import useMemo for performance ---
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { toast } from 'react-toastify';
@@ -10,7 +11,7 @@ import { toast } from 'react-toastify';
 interface Request {
   _id: string;
   description: string;
-  status: string;
+  status: 'pending' | 'active' | 'completed';
   createdAt: string;
   providerId?: { name: string; email: string };
   customerId?: { name: string; email: string };
@@ -80,7 +81,6 @@ export default function Dashboard() {
       });
 
       if (res.ok) {
-        // Refresh requests to show updated status
         fetchRequests();
         toast.success(`Request ${status === 'active' ? 'accepted' : 'completed'} successfully!`);
       } else {
@@ -117,7 +117,6 @@ export default function Dashboard() {
             <p className="text-gray-600">Welcome back, {session.user?.name}!</p>
           </div>
 
-          {/* Quick Actions Bar */}
           <div className="bg-white rounded-lg shadow p-6 mb-8">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h2>
             <div className="flex flex-wrap gap-4">
@@ -127,48 +126,48 @@ export default function Dashboard() {
                     href="/services"
                     className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
                     Browse Services
                   </Link>
                   <Link
                     href="/dashboard/feedback"
                     className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
                   >
-                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
-                    </svg>
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" /></svg>
                     Leave Feedback
                   </Link>
                 </>
               )}
               {session.user?.role === 'provider' && (
-                <Link
-                  href="/profile"
-                  className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
-                >
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  Update Profile
-                </Link>
+                <>
+                  <Link
+                    href="/dashboard/subscription"
+                    className="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    Manage Subscription
+                  </Link>
+                  <Link
+                    href="/profile"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
+                  >
+                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                    Update Profile
+                  </Link>
+                </>
               )}
               <Link
                 href="/profile"
                 className="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
               >
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                 Settings
               </Link>
             </div>
           </div>
 
         {session.user?.role === 'customer' ? (
-          <CustomerDashboard requests={requests} providers={providers} />
+          <CustomerDashboard requests={requests} providers={providers} onRefreshRequests={fetchRequests} />
         ) : (
           <ProviderDashboard requests={requests} onUpdateStatus={updateRequestStatus} />
         )}
@@ -177,15 +176,30 @@ export default function Dashboard() {
   );
 }
 
-function CustomerDashboard({ requests, providers }: { requests: Request[], providers: Provider[] }) {
+
+function CustomerDashboard({ requests, providers, onRefreshRequests }: { requests: Request[], providers: Provider[], onRefreshRequests: () => Promise<void> }) {
   const [selectedProvider, setSelectedProvider] = useState('');
   const [description, setDescription] = useState('');
   const [showRequestForm, setShowRequestForm] = useState(false);
 
-  const sortedRequests = [...requests].sort((a, b) => {
+  const [searchTerm, setSearchTerm] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'pending' | 'active' | 'completed'>('all');
+
+  const filteredAndSortedRequests = useMemo(() => {
     const statusOrder: Record<string, number> = { pending: 1, active: 2, completed: 3 };
-    return statusOrder[a.status] - statusOrder[b.status];
-  });
+
+    return requests
+      .filter(request => {
+        if (statusFilter !== 'all' && request.status !== statusFilter) {
+          return false;
+        }
+        if (searchTerm && !request.description.toLowerCase().includes(searchTerm.toLowerCase())) {
+          return false;
+        }
+        return true;
+      })
+      .sort((a, b) => statusOrder[a.status] - statusOrder[b.status]);
+  }, [requests, searchTerm, statusFilter]); 
 
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -200,17 +214,26 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
         setShowRequestForm(false);
         setDescription('');
         setSelectedProvider('');
-        // Refresh requests
-        window.location.reload();
+        // Refresh requests data instead of reloading the page
+        onRefreshRequests();
+      } else {
+        const error = await res.json();
+        toast.error(error.error || 'Failed to submit request');
       }
     } catch {
       toast.error('Error submitting request');
     }
   };
 
+  const filterButtons = [
+    { label: 'All', value: 'all' },
+    { label: 'Pending', value: 'pending' },
+    { label: 'Active', value: 'active' },
+    { label: 'Completed', value: 'completed' },
+  ];
+
   return (
     <div className="space-y-8">
-      {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow p-6">
         <h2 className="text-xl font-semibold mb-4 text-black">Quick Actions</h2>
         <button
@@ -221,7 +244,6 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
         </button>
       </div>
 
-      {/* Request Form */}
       {showRequestForm && (
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold mb-4 text-black">Create Service Request</h3>
@@ -253,24 +275,52 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
                 required
               />
             </div>
-            <button
-              type="submit"
-              className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition duration-300"
-            >
+            <button type="submit" className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg font-semibold transition duration-300">
               Submit Request
             </button>
           </form>
         </div>
       )}
 
-      {/* My Requests */}
+      {/* My Requests Section */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4 text-black">My Service Requests</h2>
-        {sortedRequests.length === 0 ? (
-          <p className="text-gray-500">No requests yet. Create your first service request!</p>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <h2 className="text-xl font-semibold text-black">My Service Requests</h2>
+          <input
+            type="text"
+            placeholder="Search by description..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full md:w-64 px-4 py-2 border border-gray-300 text-black rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+        </div>
+        
+        <div className="flex flex-wrap items-center gap-2 mb-6">
+          <span className="text-sm font-medium text-gray-600 mr-2">Filter by status:</span>
+          {filterButtons.map(({ label, value }) => (
+            <button
+              key={value}
+              
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              onClick={() => setStatusFilter(value as any)}
+              className={`px-4 py-1.5 text-sm font-semibold rounded-full transition-colors ${
+                statusFilter === value
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {requests.length === 0 ? (
+           <p className="text-gray-500 text-center py-8">No requests yet. Create your first service request!</p>
+        ) : filteredAndSortedRequests.length === 0 ? (
+           <p className="text-gray-500 text-center py-8">No requests match your filters.</p>
         ) : (
           <div className="space-y-4">
-            {sortedRequests.map((request) => (
+            {filteredAndSortedRequests.map((request) => (
               <div key={request._id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
                   <h3 className="font-semibold text-black">{request.description}</h3>
@@ -297,14 +347,11 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
   );
 }
 
-
 function ProviderDashboard({ requests, onUpdateStatus }: { requests: Request[], onUpdateStatus: (requestId: string, status: string) => Promise<void> }) {
-  // Filter out completed requests for dashboard - only show pending and active
   const activeRequests = requests.filter(request => request.status !== 'completed');
 
   return (
     <div className="space-y-8">
-      {/* Stats - Only for active requests */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Active Requests</h3>
@@ -324,7 +371,6 @@ function ProviderDashboard({ requests, onUpdateStatus }: { requests: Request[], 
         </div>
       </div>
 
-      {/* Active Requests */}
       <div className="bg-white rounded-lg shadow p-6">
         <div className='flex justify-between items-center mb-4'>
           <h2 className="text-xl font-semibold mb-4 text-black">Active Service Requests</h2>
@@ -332,25 +378,16 @@ function ProviderDashboard({ requests, onUpdateStatus }: { requests: Request[], 
             href="/requests"
             className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
             >
-            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             View All Requests
           </Link>
         </div>
         {activeRequests.length === 0 ? (
           <div className="text-center py-12">
-            <svg className="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
+            <svg className="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             <h3 className="text-lg font-medium text-gray-900 mb-2">No active requests</h3>
-            <p className="text-gray-600 mb-4">
-              You have no pending or active service requests at the moment.
-            </p>
-            <Link
-              href="/requests"
-              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200"
-            >
+            <p className="text-gray-600 mb-4">You have no pending or active service requests at the moment.</p>
+            <Link href="/requests" className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200">
               View All Requests
             </Link>
           </div>
@@ -369,29 +406,19 @@ function ProviderDashboard({ requests, onUpdateStatus }: { requests: Request[], 
                       {request.status}
                     </span>
                     {request.status === 'pending' && (
-                      <button
-                        onClick={() => onUpdateStatus(request._id, 'active')}
-                        className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition duration-300"
-                      >
+                      <button onClick={() => onUpdateStatus(request._id, 'active')} className="bg-green-600 hover:bg-green-700 text-white px-3 py-1 rounded text-sm transition duration-300">
                         Accept
                       </button>
                     )}
                     {request.status === 'active' && (
-                      <button
-                        onClick={() => onUpdateStatus(request._id, 'completed')}
-                        className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition duration-300"
-                      >
+                      <button onClick={() => onUpdateStatus(request._id, 'completed')} className="bg-blue-600 hover:bg-blue-700 text-white px-3 py-1 rounded text-sm transition duration-300">
                         Complete
                       </button>
                     )}
                   </div>
                 </div>
-                <p className="text-sm text-gray-600 mb-2">
-                  Customer: {request.customerId?.name} ({request.customerId?.email})
-                </p>
-                <p className="text-xs text-gray-500">
-                  Created: {new Date(request.createdAt).toLocaleDateString()}
-                </p>
+                <p className="text-sm text-gray-600 mb-2">Customer: {request.customerId?.name} ({request.customerId?.email})</p>
+                <p className="text-xs text-gray-500">Created: {new Date(request.createdAt).toLocaleDateString()}</p>
               </div>
             ))}
           </div>

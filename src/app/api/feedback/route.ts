@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import dbConnect from '@/lib/db';
-import Feedback from '@/lib/models/Feedback';
-import Request from '@/lib/models/Request';
-import ServiceProvider from '@/lib/models/ServiceProvider';
+import Feedback from '@/models/Feedback';
+import Request from '@/models/Request';
+import ServiceProvider from '@/models/ServiceProvider';
 import { authOptions } from '@/lib/auth';
 
 export async function POST(request: NextRequest) {

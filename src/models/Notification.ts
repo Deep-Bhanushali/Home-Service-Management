@@ -5,12 +5,17 @@ const notificationSchema = new mongoose.Schema({
   senderId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
   type: {
     type: String,
-    enum: ['service_request', 'request_accepted', 'request_completed', 'feedback_received'],
+    enum: ['service_request', 'request_accepted', 'request_completed', 'feedback_received', 'subscription_expiring', 'subscription_expired'],
     required: true
   },
   title: { type: String, required: true },
   message: { type: String, required: true },
   requestId: { type: mongoose.Schema.Types.ObjectId, ref: 'Request' },
+  metadata: {
+    subscriptionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Subscription' },
+    daysUntilExpiry: { type: Number },
+    expiryDate: { type: Date }
+  },
   isRead: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });

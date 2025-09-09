@@ -5,6 +5,8 @@ const serviceProviderSchema = new mongoose.Schema({
   skills: [{ type: String }],
   availability: { type: Boolean, default: true },
   rating: { type: Number, default: 0 },
+  subscriptionStatus: { type: String, enum: ['active', 'inactive', 'expired'], default: 'inactive' },
+  subscriptionId: { type: mongoose.Schema.Types.ObjectId, ref: 'Subscription' },
 });
 
 const ServiceProvider = mongoose.models.ServiceProvider || mongoose.model('ServiceProvider', serviceProviderSchema);

@@ -1,8 +1,8 @@
 import dbConnect from './db';
-import User from './models/User';
-import ServiceProvider from './models/ServiceProvider';
-import Request from './models/Request';
-import Feedback from './models/Feedback';
+import User from '../models/User';
+import ServiceProvider from '../models/ServiceProvider';
+import Request from '../models/Request';
+import Feedback from '../models/Feedback';
 import bcrypt from 'bcryptjs';
 
 export async function seedDatabase() {

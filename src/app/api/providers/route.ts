@@ -1,18 +1,21 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
-import ServiceProvider from '@/lib/models/ServiceProvider';
-import User from '@/lib/models/User';
+import ServiceProvider from '@/models/ServiceProvider';
+import User from '@/models/User';
 
 export async function GET(request: NextRequest) {
   try {
     await dbConnect();
 
-    // First, get all available service providers
-    const providers = await ServiceProvider.find({ availability: true });
-    console.log('Found providers:', providers.length);
+    // First, get all available service providers with active subscriptions
+    const providers = await ServiceProvider.find({
+      availability: true,
+      subscriptionStatus: 'active'
+    });
+    console.log('Found providers with active subscriptions:', providers.length);
 
     if (providers.length === 0) {
-      console.log('No providers found in database');
+      console.log('No providers with active subscriptions found in database');
       return NextResponse.json([]);
     }
 
@@ -37,7 +40,8 @@ export async function GET(request: NextRequest) {
         } : null,
         skills: provider.skills,
         availability: provider.availability,
-        rating: provider.rating
+        rating: provider.rating,
+        subscriptionStatus: provider.subscriptionStatus
       };
     }).filter(p => p.userId !== null); // Filter out providers with missing user data
 

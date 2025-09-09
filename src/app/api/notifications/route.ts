@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import dbConnect from '@/lib/db';
-import Notification from '@/lib/models/Notification';
+import Notification from '@/models/Notification';
 import { authOptions } from '@/lib/auth';
 
 // Import Request model to ensure it's registered
-import '@/lib/models/Request';
+import '@/models/Request';
 
 export async function GET(request: NextRequest) {
   try {

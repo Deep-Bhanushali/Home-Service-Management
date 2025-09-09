@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
-import User from '@/lib/models/User';
-import ServiceProvider from '@/lib/models/ServiceProvider';
+import User from '@/models/User';
+import ServiceProvider from '@/models/ServiceProvider';
 
 export async function GET(request: NextRequest) {
   try {

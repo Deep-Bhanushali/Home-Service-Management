@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import dbConnect from '@/lib/db';
-import Request from '@/lib/models/Request';
-import Notification from '@/lib/models/Notification';
-import User from '@/lib/models/User';
+import Request from '@/models/Request';
+import Notification from '@/models/Notification';
+import User from '@/models/User';
 import { authOptions } from '@/lib/auth';
 
 export async function PUT(
