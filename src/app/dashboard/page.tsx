@@ -182,6 +182,11 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
   const [description, setDescription] = useState('');
   const [showRequestForm, setShowRequestForm] = useState(false);
 
+  const sortedRequests = [...requests].sort((a, b) => {
+    const statusOrder: Record<string, number> = { pending: 1, active: 2, completed: 3 };
+    return statusOrder[a.status] - statusOrder[b.status];
+  });
+
   const handleSubmitRequest = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
@@ -207,7 +212,7 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
     <div className="space-y-8">
       {/* Quick Actions */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+        <h2 className="text-xl font-semibold mb-4 text-black">Quick Actions</h2>
         <button
           onClick={() => setShowRequestForm(!showRequestForm)}
           className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-semibold transition duration-300"
@@ -219,14 +224,14 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
       {/* Request Form */}
       {showRequestForm && (
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Create Service Request</h3>
+          <h3 className="text-lg font-semibold mb-4 text-black">Create Service Request</h3>
           <form onSubmit={handleSubmitRequest} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">Select Provider</label>
               <select
                 value={selectedProvider}
                 onChange={(e) => setSelectedProvider(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 text-black border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               >
                 <option value="">Choose a provider...</option>
@@ -242,7 +247,7 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
               <textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-3 py-2 border border-gray-300 text-black rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
                 rows={4}
                 placeholder="Describe the service you need..."
                 required
@@ -260,15 +265,15 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
 
       {/* My Requests */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">My Service Requests</h2>
-        {requests.length === 0 ? (
+        <h2 className="text-xl font-semibold mb-4 text-black">My Service Requests</h2>
+        {sortedRequests.length === 0 ? (
           <p className="text-gray-500">No requests yet. Create your first service request!</p>
         ) : (
           <div className="space-y-4">
-            {requests.map((request) => (
+            {sortedRequests.map((request) => (
               <div key={request._id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold">{request.description}</h3>
+                  <h3 className="font-semibold text-black">{request.description}</h3>
                   <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                     request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                     request.status === 'active' ? 'bg-blue-100 text-blue-800' :
@@ -292,50 +297,69 @@ function CustomerDashboard({ requests, providers }: { requests: Request[], provi
   );
 }
 
-interface NotificationData {
-  requestId: string;
-  customerName: string;
-  customerEmail: string;
-  description: string;
-  createdAt: string;
-  message: string;
-}
 
 function ProviderDashboard({ requests, onUpdateStatus }: { requests: Request[], onUpdateStatus: (requestId: string, status: string) => Promise<void> }) {
+  // Filter out completed requests for dashboard - only show pending and active
+  const activeRequests = requests.filter(request => request.status !== 'completed');
 
   return (
     <div className="space-y-8">
-      {/* Stats */}
+      {/* Stats - Only for active requests */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Total Requests</h3>
-          <p className="text-3xl font-bold text-blue-600">{requests.length}</p>
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Active Requests</h3>
+          <p className="text-3xl font-bold text-blue-600">{activeRequests.length}</p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Active Requests</h3>
-          <p className="text-3xl font-bold text-green-600">
-            {requests.filter(r => r.status === 'active').length}
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">Pending</h3>
+          <p className="text-3xl font-bold text-yellow-600">
+            {activeRequests.filter(r => r.status === 'pending').length}
           </p>
         </div>
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-2">Completed</h3>
-          <p className="text-3xl font-bold text-purple-600">
-            {requests.filter(r => r.status === 'completed').length}
+          <h3 className="text-lg font-semibold text-gray-900 mb-2">In Progress</h3>
+          <p className="text-3xl font-bold text-green-600">
+            {activeRequests.filter(r => r.status === 'active').length}
           </p>
         </div>
       </div>
 
-      {/* My Requests */}
+      {/* Active Requests */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Service Requests</h2>
-        {requests.length === 0 ? (
-          <p className="text-gray-500">No requests yet.</p>
+        <div className='flex justify-between items-center mb-4'>
+          <h2 className="text-xl font-semibold mb-4 text-black">Active Service Requests</h2>
+          <Link
+            href="/requests"
+            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center"
+            >
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            View All Requests
+          </Link>
+        </div>
+        {activeRequests.length === 0 ? (
+          <div className="text-center py-12">
+            <svg className="mx-auto h-24 w-24 text-gray-400 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">No active requests</h3>
+            <p className="text-gray-600 mb-4">
+              You have no pending or active service requests at the moment.
+            </p>
+            <Link
+              href="/requests"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-medium transition duration-200"
+            >
+              View All Requests
+            </Link>
+          </div>
         ) : (
           <div className="space-y-4">
-            {requests.map((request) => (
+            {activeRequests.map((request) => (
               <div key={request._id} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold">{request.description}</h3>
+                  <h3 className="font-semibold text-gray-900">{request.description}</h3>
                   <div className="flex items-center space-x-2">
                     <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
                       request.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :

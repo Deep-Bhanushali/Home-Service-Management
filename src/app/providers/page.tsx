@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { CustomerOnly } from '@/components/RoleGuard';
+import { Mail, Phone } from 'lucide-react';
 
 interface Provider {
   _id: string;
@@ -124,7 +125,7 @@ export default function ProvidersPage() {
                 <input
                   type="text"
                   placeholder="Search by name or skill..."
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
@@ -136,7 +137,7 @@ export default function ProvidersPage() {
                   </svg>
                 </div>
                 <select
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="block w-full pl-10 pr-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   value={selectedSkill}
                   onChange={(e) => setSelectedSkill(e.target.value)}
                 >
@@ -194,10 +195,12 @@ export default function ProvidersPage() {
 
                     <div className="flex items-center justify-between text-sm text-gray-600 mb-4">
                       <div className="flex items-center">
-                        <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                        </svg>
+                        <Mail className="w-4 h-4 mr-1" />
                         {provider.userId.email}
+                      </div>
+                      <div className="flex items-center">
+                        <Phone className="w-4 h-4 mr-1" />
+                        {provider.userId.contact}
                       </div>
                     </div>
 

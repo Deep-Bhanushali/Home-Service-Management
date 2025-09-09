@@ -262,7 +262,7 @@ export default function ProfilePage() {
                         type="text"
                         value={formData.name}
                         onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         required
                       />
                     </div>
@@ -271,7 +271,7 @@ export default function ProfilePage() {
                       <input
                         type="email"
                         value={formData.email}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
+                        className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md bg-gray-100 cursor-not-allowed"
                         disabled
                       />
                       <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
@@ -282,7 +282,7 @@ export default function ProfilePage() {
                         type="text"
                         value={formData.address}
                         onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div>
@@ -291,7 +291,7 @@ export default function ProfilePage() {
                         type="tel"
                         value={formData.contact}
                         onChange={(e) => setFormData(prev => ({ ...prev, contact: e.target.value }))}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                        className="w-full px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -321,7 +321,7 @@ export default function ProfilePage() {
                           <input
                             type="text"
                             placeholder="Add a skill..."
-                            className="flex-1 px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className="flex-1 px-3 py-2 text-gray-500 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             onKeyPress={(e) => {
                               if (e.key === 'Enter') {
                                 e.preventDefault();

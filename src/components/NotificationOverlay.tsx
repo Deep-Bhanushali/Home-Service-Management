@@ -24,7 +24,7 @@ interface NotificationOverlayProps {
 
 export default function NotificationOverlay({ isOpen, onClose, anchorRef }: NotificationOverlayProps) {
   const { data: session } = useSession();
-  const router = useRouter(); 
+  const router = useRouter();
   const overlayRef = useRef<HTMLDivElement>(null);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [loading, setLoading] = useState(false);
@@ -44,11 +44,11 @@ export default function NotificationOverlay({ isOpen, onClose, anchorRef }: Noti
       const viewportHeight = window.innerHeight;
       const isSmallScreen = viewportWidth < 640; // sm breakpoint
 
-      // Responsive overlay dimensions (accounting for padding/margins)
-      const overlayWidth = isSmallScreen ? Math.min(320, viewportWidth - 64) : 384; // 64px for margins
-      const overlayHeight = Math.min(384, viewportHeight - 32); // Don't exceed viewport height
+      // Responsive overlay dimensions with safe margins
+      const overlayWidth = isSmallScreen ? Math.min(320, viewportWidth - 48) : 384; // 48px for safe margins
+      const overlayHeight = Math.min(384, viewportHeight - 48); // Don't exceed viewport height
 
-      // Ensure overlay stays within viewport bounds
+      // Center the overlay on screen with bounds checking
       const left = Math.max(16, Math.min(viewportWidth - overlayWidth - 16, (viewportWidth - overlayWidth) / 2));
       const top = Math.max(16, Math.min(viewportHeight - overlayHeight - 16, (viewportHeight - overlayHeight) / 2));
 
@@ -182,7 +182,7 @@ export default function NotificationOverlay({ isOpen, onClose, anchorRef }: Noti
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  if (!isOpen) return null;
+  if (!isOpen) return <></>;
 
   return (
     <div
@@ -194,7 +194,7 @@ export default function NotificationOverlay({ isOpen, onClose, anchorRef }: Noti
     >
       <div
         ref={overlayRef}
-        className="bg-white rounded-lg shadow-xl border w-80 sm:w-96 max-h-96 overflow-hidden mx-4 sm:mx-0"
+        className="bg-white rounded-lg shadow-xl border w-80 sm:w-96 max-h-96 overflow-hidden"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4 border-b bg-gray-50">

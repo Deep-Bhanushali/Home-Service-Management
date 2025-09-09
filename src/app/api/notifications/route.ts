@@ -4,6 +4,9 @@ import dbConnect from '@/lib/db';
 import Notification from '@/lib/models/Notification';
 import { authOptions } from '@/lib/auth';
 
+// Import Request model to ensure it's registered
+import '@/lib/models/Request';
+
 export async function GET(request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);

@@ -8,13 +8,15 @@ import { authOptions } from '@/lib/auth';
 
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+
+    const { id } = await params;
 
     await dbConnect();
     const { status } = await request.json();
@@ -26,7 +28,7 @@ export async function PUT(
 
     // Find and update the request
     const updatedRequest = await Request.findByIdAndUpdate(
-      params.id,
+      id,
       {
         status,
         updatedAt: new Date()
@@ -66,7 +68,6 @@ export async function PUT(
         console.log('Acceptance notification created for customer:', updatedRequest.customerId._id);
       } catch (notificationError) {
         console.error('Error creating acceptance notification:', notificationError);
-        // Don't fail the request if notification creation fails
       }
     }
 

@@ -57,51 +57,58 @@ export default function Navbar() {
                 {session.user?.role !== 'provider' && <Link href="/services" className="hover:text-blue-200 transition duration-200 font-medium">
                   Services
                 </Link>}
+                {session.user?.role === 'provider' && <Link href="/requests" className="hover:text-blue-200 transition duration-200 font-medium">
+                  Requests
+                </Link>}
               </>
             )}
           </div>
 
-          {/* User Menu */}
+          {/* User Menu & Actions */}
           <div className="flex items-center space-x-4">
             {isLoading ? (
               <div className="w-8 h-8 bg-blue-500 rounded-full animate-pulse"></div>
             ) : session ? (
-              <div className="flex items-center space-x-4">
+              <>
+                {/* Notification Bell - Always visible for authenticated users */}
                 <button
-                ref={notificationButtonRef}
-                onClick={() => {
-                  setIsNotificationOpen(!isNotificationOpen);
-                  setIsMobileMenuOpen(false);
-                }}
-                className="hover:text-blue-200 transition duration-200 font-medium relative"
-              >
-                <Bell className="inline-block w-5 h-5" />
-              </button>
-                {/* User Info */}
-                <div className="hidden md:flex items-center space-x-2">
-                  <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
-                    <span className="text-sm font-semibold">
-                      {session.user?.name?.charAt(0).toUpperCase()}
-                    </span>
-                  </div>
-                  <div className="text-right">
-                    <p className="text-sm font-medium">{session.user?.name}</p>
-                    <p className="text-xs opacity-75 capitalize">{session.user?.role}</p>
-                  </div>
-                </div>
-
-                {/* Logout Button - Hidden on Mobile */}
-                <button
-                  onClick={handleSignOut}
-                  className="hidden md:flex bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium transition duration-200 items-center space-x-2"
+                  ref={notificationButtonRef}
+                  onClick={() => {
+                    setIsNotificationOpen(!isNotificationOpen);
+                    setIsMobileMenuOpen(false);
+                  }}
+                  className="hover:text-blue-200 transition duration-200 font-medium relative"
                 >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                  <span>Logout</span>
+                  <Bell className="inline-block w-5 h-5" />
                 </button>
-              </div>
+
+                {/* Desktop User Info & Logout */}
+                <div className="hidden md:flex items-center space-x-4">
+                  <Link href='/profile' className="flex items-center space-x-2">
+                    <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
+                      <span className="text-sm font-semibold">
+                        {session.user?.name?.charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-medium">{session.user?.name}</p>
+                      <p className="text-xs opacity-75 capitalize">{session.user?.role}</p>
+                    </div>
+                  </Link>
+
+                  <button
+                    onClick={handleSignOut}
+                    className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-medium transition duration-200 flex items-center space-x-2"
+                  >
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                    </svg>
+                    <span>Logout</span>
+                  </button>
+                </div>
+              </>
             ) : (
+              /* Non-authenticated users */
               <div className="flex items-center space-x-3">
                 <Link
                   href="/login"
@@ -118,16 +125,14 @@ export default function Navbar() {
               </div>
             )}
 
-            
-
-            {/* Mobile Menu Button */}
-            <div className="md:hidden">
+            {/* Mobile Menu Button - Always visible on mobile */}
+            <div className="md:hidden ml-2">
               <button
                 onClick={() => {
                   setIsMobileMenuOpen(!isMobileMenuOpen);
                   setIsNotificationOpen(false);
                 }}
-                className="text-white hover:text-blue-200 transition-colors"
+                className="text-white hover:text-blue-200 transition-colors p-1"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
@@ -200,6 +205,13 @@ export default function Navbar() {
                           🔧 Services
                         </Link>
                       )}
+                      <Link
+                        href="/requests"
+                        className="block text-white hover:text-blue-200 transition-colors font-medium py-3 px-4 rounded-lg hover:bg-blue-500"
+                        onClick={() => setIsMobileMenuOpen(false)}
+                      >
+                        📋 All Requests
+                      </Link>
                       <button
                         onClick={() => {
                           setIsMobileMenuOpen(false);
