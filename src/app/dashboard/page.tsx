@@ -2,11 +2,11 @@
 
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
-// --- Import useMemo for performance ---
 import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { toast } from 'react-toastify';
+import { CircleAlert } from 'lucide-react'
 
 interface Request {
   _id: string;
@@ -23,6 +23,7 @@ interface Provider {
   skills: string[];
   availability: boolean;
   rating: number;
+  subscriptionStatus?: string;
 }
 
 export default function Dashboard() {
@@ -30,6 +31,7 @@ export default function Dashboard() {
   const router = useRouter();
   const [requests, setRequests] = useState<Request[]>([]);
   const [providers, setProviders] = useState<Provider[]>([]);
+  const [providerProfile, setProviderProfile] = useState<Provider | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -42,6 +44,8 @@ export default function Dashboard() {
       fetchRequests();
       if (session.user?.role === 'customer') {
         fetchProviders();
+      } else if (session.user?.role === 'provider') {
+        fetchProviderProfile();
       }
     }
   }, [session]);
@@ -69,6 +73,18 @@ export default function Dashboard() {
       }
     } catch (error) {
       console.error('Error fetching providers:', error);
+    }
+  };
+
+  const fetchProviderProfile = async () => {
+    try {
+      const res = await fetch('/api/providers/profile');
+      if (res.ok) {
+        const data = await res.json();
+        setProviderProfile(data);
+      }
+    } catch (error) {
+      console.error('Error fetching provider profile:', error);
     }
   };
 
@@ -169,7 +185,7 @@ export default function Dashboard() {
         {session.user?.role === 'customer' ? (
           <CustomerDashboard requests={requests} providers={providers} onRefreshRequests={fetchRequests} />
         ) : (
-          <ProviderDashboard requests={requests} onUpdateStatus={updateRequestStatus} />
+          <ProviderDashboard requests={requests} onUpdateStatus={updateRequestStatus} providerProfile={providerProfile} />
         )}
       </div>
     </div>
@@ -347,11 +363,37 @@ function CustomerDashboard({ requests, providers, onRefreshRequests }: { request
   );
 }
 
-function ProviderDashboard({ requests, onUpdateStatus }: { requests: Request[], onUpdateStatus: (requestId: string, status: string) => Promise<void> }) {
+function ProviderDashboard({ requests, onUpdateStatus, providerProfile }: { requests: Request[], onUpdateStatus: (requestId: string, status: string) => Promise<void>, providerProfile: Provider | null }) {
   const activeRequests = requests.filter(request => request.status !== 'completed');
 
   return (
     <div className="space-y-8">
+      {providerProfile && providerProfile.subscriptionStatus !== 'active' && (
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 shadow-sm">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <CircleAlert className="h-6 w-6 text-red-400" />
+            </div>
+            <div className="ml-3 flex-1">
+              <h3 className="text-sm font-semibold text-red-800">Subscription Required</h3>
+              <p className="text-sm text-red-700 mt-1">
+                Customers won&apos;t be able to see or book your services until you have an active subscription. Upgrade now to start receiving service requests.
+              </p>
+              <div className="mt-3">
+                <Link
+                  href="/dashboard/subscription"
+                  className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition duration-200"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                  </svg>
+                  Upgrade Subscription
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white rounded-lg shadow p-6">
           <h3 className="text-lg font-semibold text-gray-900 mb-2">Active Requests</h3>

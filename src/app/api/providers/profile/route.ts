@@ -24,6 +24,7 @@ export async function GET(request: NextRequest) {
       skills: provider.skills,
       availability: provider.availability,
       rating: provider.rating,
+      subscriptionStatus: provider.subscriptionStatus,
     });
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -56,6 +57,7 @@ export async function PUT(request: NextRequest) {
       skills: updatedProvider.skills,
       availability: updatedProvider.availability,
       rating: updatedProvider.rating,
+      subscriptionStatus: updatedProvider.subscriptionStatus,
     });
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
@@ -93,6 +95,7 @@ export async function POST(request: NextRequest) {
       skills: newProvider.skills,
       availability: newProvider.availability,
       rating: newProvider.rating,
+      subscriptionStatus: newProvider.subscriptionStatus,
     }, { status: 201 });
   } catch (error) {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

@@ -236,7 +236,7 @@ export default function Navbar() {
       </div>
 
       {/* Notification Overlay */}
-      <NotificationOverlaygit
+      <NotificationOverlay
         isOpen={isNotificationOpen}
         onClose={() => setIsNotificationOpen(false)}
         anchorRef={notificationButtonRef} 
