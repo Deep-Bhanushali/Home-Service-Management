@@ -32,12 +32,10 @@ A comprehensive platform connecting customers with trusted service providers for
 - **Real-time Notifications**: Instant updates for service requests
 - **Subscription Alerts**: Automatic expiry warnings and renewals
 - **Email Integration**: Configurable notification preferences
-- **Admin Dashboard**: Centralized notification management
 
 ### 📊 Dashboard & Analytics
 - **Customer Dashboard**: Track requests, view history, manage profile
 - **Provider Dashboard**: Manage services, view earnings, subscription status
-- **Admin Panel**: System-wide monitoring and management
 - **Performance Metrics**: Service completion rates and customer satisfaction
 
 ### ⭐ Feedback & Ratings
