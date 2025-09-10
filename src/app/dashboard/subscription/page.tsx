@@ -6,9 +6,9 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import { toast } from 'react-toastify';
-import { loadStripe } from '@stripe/stripe-js';
+// import { loadStripe } from '@stripe/stripe-js';
 
-const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+// const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 interface Subscription {
   _id: string;
@@ -92,7 +92,7 @@ export default function SubscriptionPage() {
         const error = await res.json();
         toast.error(error.error || 'Failed to create checkout session');
       }
-    } catch (error) {
+    } catch {
       toast.error('Failed to create checkout session');
     }
   };
@@ -111,7 +111,7 @@ export default function SubscriptionPage() {
         const error = await res.json();
         toast.error(error.error || `Failed to ${action} subscription`);
       }
-    } catch (error) {
+    } catch {
       toast.error(`Failed to ${action} subscription`);
     }
   };

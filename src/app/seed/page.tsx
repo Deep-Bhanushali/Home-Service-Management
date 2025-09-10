@@ -43,7 +43,7 @@ export default function SeedPage() {
       } else {
         setError(data.error || 'Seeding failed');
       }
-    } catch (err) {
+    } catch {
       setError('Network error occurred');
     } finally {
       setLoading(false);

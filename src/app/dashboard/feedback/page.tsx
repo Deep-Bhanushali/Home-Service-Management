@@ -26,7 +26,7 @@ export default function FeedbackPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [requests, setRequests] = useState<Request[]>([]);
-  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]);
+  const [feedbacks, setFeedbacks] = useState<Feedback[]>([]); // setFeedbacks will now be used
   const [loading, setLoading] = useState(true);
   const [selectedRequest, setSelectedRequest] = useState<string>('');
   const [rating, setRating] = useState(5);
@@ -40,7 +40,9 @@ export default function FeedbackPage() {
 
   useEffect(() => {
     if (session?.user?.role === 'customer') {
+      // Fetch both completed requests and existing feedback
       fetchCompletedRequests();
+      fetchUserFeedbacks(); // Call the new function here
     }
   }, [session]);
 
@@ -56,6 +58,19 @@ export default function FeedbackPage() {
       console.error('Error fetching requests:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // FIX: Added function to fetch existing feedback
+  const fetchUserFeedbacks = async () => {
+    try {
+      const res = await fetch('/api/feedback'); // Assuming a GET endpoint exists
+      if (res.ok) {
+        const data = await res.json();
+        setFeedbacks(data); // Use setFeedbacks to update the state
+      }
+    } catch (error) {
+      console.error('Error fetching feedback:', error);
     }
   };
 
@@ -80,7 +95,9 @@ export default function FeedbackPage() {
         setSelectedRequest('');
         setRating(5);
         setComment('');
-        fetchCompletedRequests(); // Refresh the list
+        // Refresh both lists after successful submission
+        fetchCompletedRequests();
+        fetchUserFeedbacks(); // FIX: Refresh feedbacks to show the new one
       } else {
         const error = await res.json();
         alert(`Error: ${error.error || 'Failed to submit feedback'}`);

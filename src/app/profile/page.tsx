@@ -1,10 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react'; // Import useCallback
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { toast } from 'react-toastify';
+
+// ... (interfaces remain the same) ...
 
 interface UserProfile {
   _id: string;
@@ -49,21 +51,11 @@ export default function ProfilePage() {
     availability: true,
   });
 
-  useEffect(() => {
-    if (status === 'loading') return;
-    if (!session) router.push('/login');
-  }, [session, status, router]);
+  // FIX: Wrap fetchProfile in useCallback
+  const fetchProfile = useCallback(async () => {
+    // Prevent fetching if session is not available
+    if (!session) return;
 
-  useEffect(() => {
-    if (session) {
-      fetchProfile();
-      if (session.user?.role === 'customer') {
-        fetchRequestHistory();
-      }
-    }
-  }, [session]);
-
-  const fetchProfile = async () => {
     try {
       // Fetch user profile
       const userRes = await fetch('/api/users/profile');
@@ -81,7 +73,7 @@ export default function ProfilePage() {
       }
 
       // Fetch provider profile if user is a provider
-      if (session?.user?.role === 'provider') {
+      if (session.user?.role === 'provider') {
         const providerRes = await fetch('/api/providers/profile');
         if (providerRes.ok) {
           const providerData = await providerRes.json();
@@ -95,10 +87,26 @@ export default function ProfilePage() {
       }
     } catch (error) {
       console.error('Error fetching profile:', error);
+      toast.error('Failed to fetch profile data.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [session]); // Add session as a dependency for useCallback
+
+  useEffect(() => {
+    if (status === 'loading') return;
+    if (!session) router.push('/login');
+  }, [session, status, router]);
+
+  useEffect(() => {
+    if (session) {
+      fetchProfile(); // Now this is stable
+      if (session.user?.role === 'customer') {
+        fetchRequestHistory();
+      }
+    }
+    // FIX: Add fetchProfile to the dependency array
+  }, [session, fetchProfile]);
 
   const fetchRequestHistory = async () => {
     try {
@@ -111,6 +119,8 @@ export default function ProfilePage() {
       console.error('Error fetching request history:', error);
     }
   };
+
+  // ... (rest of the component remains the same) ...
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,7 +153,7 @@ export default function ProfilePage() {
         fetchProfile(); // Refresh data
         toast.success('Profile updated successfully!');
       }
-    } catch (error) {
+    } catch {
       toast.error('Error updating profile');
     }
   };

@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { seedDatabase } from '@/lib/seed';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
   try {
     console.log('🌱 Starting database seeding via API...');
     await seedDatabase();

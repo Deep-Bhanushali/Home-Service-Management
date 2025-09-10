@@ -5,6 +5,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 
+// ... (interface and serviceCategories array remain the same) ...
 interface ServiceCategory {
   id: string;
   name: string;
@@ -69,7 +70,9 @@ export default function ServicesPage() {
   }, [session, status, router]);
 
   const handleCategoryClick = (categoryId: string) => {
-    // Map category IDs to skill names that match the database
+    // FIX: Use the state setter to provide visual feedback on click
+    setSelectedCategory(categoryId);
+
     const skillMapping: { [key: string]: string } = {
       'plumbing': 'Plumbing',
       'electrical': 'Electrical Wiring',
@@ -82,12 +85,13 @@ export default function ServicesPage() {
     const skillName = skillMapping[categoryId] || categoryId;
 
     if (session?.user?.role === 'customer') {
-      // Customers: Filter providers by skill
       router.push(`/providers?skill=${encodeURIComponent(skillName)}`);
     } else if (session?.user?.role === 'provider') {
+      // Future logic for providers can go here
     }
   };
 
+  // ... (rest of the component remains the same) ...
   if (status === 'loading') {
     return (
       <div className="min-h-screen bg-gray-50">

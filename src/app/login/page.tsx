@@ -2,7 +2,6 @@
 
 import { useState } from 'react';
 import { signIn } from 'next-auth/react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
 export default function Login() {
@@ -10,7 +9,6 @@ export default function Login() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,10 +23,19 @@ export default function Login() {
 
     if (result?.error) {
       setError('Invalid email or password');
+      setLoading(false);
     } else {
-      router.push('/dashboard');
+      // Check if there's a callback URL in the query params
+      const urlParams = new URLSearchParams(window.location.search);
+      const callbackUrl = urlParams.get('callbackUrl') || '/dashboard';
+
+      // Use NextAuth's redirect instead of manual router.push
+      await signIn('credentials', {
+        email,
+        password,
+        callbackUrl,
+      });
     }
-    setLoading(false);
   };
 
   return (

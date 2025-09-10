@@ -4,7 +4,7 @@ import dbConnect from '@/lib/db';
 import User from '@/models/User';
 import { authOptions } from '@/lib/auth';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session) {
@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest) {
       contact: updatedUser.contact,
       createdAt: updatedUser.createdAt,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

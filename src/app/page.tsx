@@ -3,12 +3,9 @@
 import Navbar from "@/components/Navbar";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
 
 export default function Home() {
   const { data: session, status } = useSession();
-  const router = useRouter();
 
   // No redirect - show different content based on auth status
 
