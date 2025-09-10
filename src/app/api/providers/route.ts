@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import dbConnect from '@/lib/db';
 import ServiceProvider from '@/models/ServiceProvider';
 import User from '@/models/User';
 
-export async function GET(request: NextRequest) {
+
+export async function GET() {
   try {
     await dbConnect();
 

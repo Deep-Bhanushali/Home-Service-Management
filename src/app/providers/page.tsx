@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { CustomerOnly } from '@/components/RoleGuard';
@@ -19,7 +19,7 @@ interface Provider {
   rating: number;
 }
 
-export default function ProvidersPage() {
+function ProvidersContent() {
   const searchParams = useSearchParams();
   const [providers, setProviders] = useState<Provider[]>([]);
   const [loading, setLoading] = useState(true);
@@ -221,5 +221,20 @@ export default function ProvidersPage() {
         </div>
       </div>
     </CustomerOnly>
+  );
+}
+
+export default function ProvidersPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        </div>
+      </div>
+    }>
+      <ProvidersContent />
+    </Suspense>
   );
 }

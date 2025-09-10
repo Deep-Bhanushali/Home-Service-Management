@@ -4,7 +4,9 @@ import dbConnect from '@/lib/db';
 import ServiceProvider from '@/models/ServiceProvider';
 import { authOptions } from '@/lib/auth';
 
-export async function GET(request: NextRequest) {
+import '@/models/Request';
+
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     if (!session || session.user.role !== 'provider') {
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest) {
       rating: provider.rating,
       subscriptionStatus: provider.subscriptionStatus,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -59,7 +61,7 @@ export async function PUT(request: NextRequest) {
       rating: updatedProvider.rating,
       subscriptionStatus: updatedProvider.subscriptionStatus,
     });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
@@ -73,7 +75,6 @@ export async function POST(request: NextRequest) {
 
     await dbConnect();
 
-    // Check if provider profile already exists
     const existingProvider = await ServiceProvider.findOne({ userId: session.user.id });
     if (existingProvider) {
       return NextResponse.json({ error: 'Provider profile already exists' }, { status: 400 });
@@ -97,7 +98,7 @@ export async function POST(request: NextRequest) {
       rating: newProvider.rating,
       subscriptionStatus: newProvider.subscriptionStatus,
     }, { status: 201 });
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
