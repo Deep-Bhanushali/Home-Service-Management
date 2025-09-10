@@ -29,7 +29,6 @@ export default function NotificationOverlay({ isOpen, onClose, anchorRef }: Noti
     const [position, setPosition] = useState({ top: 0, left: 0 });
     const [isVisible, setIsVisible] = useState(false);
 
-    // Effect to fetch data when the overlay is opened
     useEffect(() => {
         if (isOpen && session) {
             fetchNotifications();
