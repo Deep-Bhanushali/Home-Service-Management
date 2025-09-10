@@ -147,7 +147,7 @@ export default function SubscriptionPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
                 <div>
                   <p className="text-sm text-gray-600">Plan</p>
-                  <p className="font-semibold capitalize">{subscription.plan}</p>
+                  <p className="font-semibold capitalize text-gray-500">{subscription.plan}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Status</p>
@@ -161,11 +161,11 @@ export default function SubscriptionPage() {
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">Start Date</p>
-                  <p className="font-semibold">{new Date(subscription.startDate).toLocaleDateString()}</p>
+                  <p className="font-semibold text-gray-500">{new Date(subscription.startDate).toLocaleDateString()}</p>
                 </div>
                 <div>
                   <p className="text-sm text-gray-600">End Date</p>
-                  <p className="font-semibold">{new Date(subscription.endDate).toLocaleDateString()}</p>
+                  <p className="font-semibold text-gray-500">{new Date(subscription.endDate).toLocaleDateString()}</p>
                 </div>
               </div>
 
